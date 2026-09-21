@@ -44,6 +44,12 @@ export type DeploymentModel = {
   featureNames: string[];
   fields: InputField[];
   numericTransforms: Record<string, { mean: number; scale: number }>;
+  dietTransform: {
+    groupNames: string[];
+    intercept: number[];
+    coefficients: number[][];
+    factorRanges: Array<{ min: number; max: number }>;
+  };
   selectedFeatures: Array<
     | { kind: 'factor'; source: string }
     | { kind: 'numeric'; source: string }
@@ -51,6 +57,7 @@ export type DeploymentModel = {
   >;
   trees: TreeNode[][];
   validationCases: Array<{ input: Record<string, number>; rawProbability: number; calibratedProbability: number }>;
+  dietValidationCases: Array<{ groups: Record<string, number>; factors: number[] }>;
 };
 
 const clamp = (value: number, lower: number, upper: number) => Math.min(upper, Math.max(lower, value));
@@ -62,6 +69,14 @@ function predictTree(nodes: TreeNode[], features: number[]) {
     index = Math.fround(features[node.feature]) <= node.threshold ? node.left : node.right;
   }
   return nodes[index].probability ?? 0;
+}
+
+export function calculateDietFactors(model: DeploymentModel, groups: Record<string, number>) {
+  return model.dietTransform.intercept.map((intercept, factorIndex) => (
+    model.dietTransform.groupNames.reduce((score, groupName, groupIndex) => (
+      score + groups[groupName] * model.dietTransform.coefficients[groupIndex][factorIndex]
+    ), intercept)
+  ));
 }
 
 export function predict(model: DeploymentModel, input: Record<string, number>) {

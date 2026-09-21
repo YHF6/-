@@ -46,6 +46,27 @@ h2 { margin-bottom: 0; font-size: 21px; line-height: 1.25; letter-spacing: 0; }
 .field input, .field select { width: 100%; height: 40px; padding: 0 10px; color: var(--ink); background: #fbfcfd; border: 1px solid #c7d1d9; border-radius: 4px; outline: none; }
 .field input:focus, .field select:focus { border-color: var(--blue); box-shadow: 0 0 0 2px rgb(23 107 141 / 12%); }
 .section-help { margin: 13px 0 0; color: var(--muted); font-size: 11px; line-height: 1.55; }
+.section-intro { display: flex; align-items: flex-start; justify-content: space-between; gap: 18px; margin-bottom: 16px; }
+.section-intro p { max-width: 570px; margin-bottom: 0; color: var(--muted); font-size: 12px; line-height: 1.55; }
+.section-intro strong { flex: 0 0 auto; color: var(--blue-dark); font-size: 11px; line-height: 1.55; }
+.questionnaire-list { border-top: 1px solid var(--line); }
+.questionnaire-row { display: grid; grid-template-columns: minmax(0, 1fr) 210px; align-items: center; gap: 18px; min-height: 66px; padding: 10px 0; border-bottom: 1px solid var(--line); }
+.question-copy { display: flex; align-items: flex-start; gap: 11px; color: #384654; font-size: 12px; line-height: 1.45; }
+.question-copy > b { width: 24px; height: 24px; display: grid; place-items: center; flex: 0 0 auto; color: var(--blue-dark); background: #edf4f7; border-radius: 50%; font-size: 10px; }
+.question-copy small { display: block; margin-top: 3px; color: var(--muted); font-size: 10px; }
+.questionnaire-row select, .food-item select { width: 100%; height: 38px; padding: 0 9px; color: var(--ink); background: #fbfcfd; border: 1px solid #c7d1d9; border-radius: 4px; outline: none; }
+.questionnaire-row select:focus, .food-item select:focus { border-color: var(--blue); box-shadow: 0 0 0 2px rgb(23 107 141 / 12%); }
+.pattern-list { margin-top: 20px; }
+.pattern-block { margin-top: 24px; }
+.pattern-block:first-child { margin-top: 0; }
+.pattern-block h3 { margin: 0; padding: 0 0 10px; border-bottom: 2px solid #b9cbd4; color: #2f3c48; font-size: 14px; line-height: 1.4; }
+.food-group { border-bottom: 1px solid var(--line); }
+.food-group summary { display: flex; align-items: center; justify-content: space-between; gap: 15px; min-height: 48px; padding: 0 2px; color: #384654; cursor: pointer; font-size: 12px; font-weight: 700; }
+.food-group summary::marker { color: var(--blue); }
+.food-group summary small { color: var(--muted); font-size: 10px; font-weight: 400; }
+.food-item-list { padding: 2px 0 11px 22px; }
+.food-item { display: grid; grid-template-columns: minmax(0, 1fr) 210px; align-items: center; gap: 18px; min-height: 48px; padding: 5px 0; }
+.food-item > span { color: #43515d; font-size: 12px; line-height: 1.4; }
 .error { display: flex; align-items: center; gap: 8px; margin: 5px 0 15px; padding: 10px 12px; color: #913737; background: #fff5f5; border: 1px solid #e9c6c6; border-radius: 4px; font-size: 13px; }
 .primary-button { min-height: 44px; display: inline-flex; align-items: center; justify-content: center; gap: 9px; margin-top: 4px; padding: 0 18px; color: white; background: var(--blue); border: 1px solid var(--blue); border-radius: 4px; font-weight: 700; cursor: pointer; }
 .primary-button:hover { background: var(--blue-dark); }
@@ -64,6 +85,10 @@ h2 { margin-bottom: 0; font-size: 21px; line-height: 1.25; letter-spacing: 0; }
 .result-content dl div { display: flex; justify-content: space-between; gap: 12px; padding: 5px 0; }
 .result-content dt { color: var(--muted); font-size: 12px; }
 .result-content dd { margin: 0; font-size: 12px; font-weight: 700; }
+.derived-inputs { margin-top: 18px; }
+.derived-inputs h3 { margin: 0 0 8px; color: #384654; font-size: 12px; }
+.derived-inputs p { display: flex; justify-content: space-between; gap: 12px; margin: 0; padding: 4px 0; color: var(--muted); font-size: 11px; }
+.derived-inputs b { color: var(--ink); font-variant-numeric: tabular-nums; }
 .empty-result { min-height: 245px; display: grid; place-content: center; justify-items: center; gap: 13px; color: #84919a; text-align: center; }
 .empty-result p { margin-bottom: 0; font-size: 13px; line-height: 1.6; }
 .notice { display: flex; align-items: flex-start; gap: 8px; margin-top: 17px; color: var(--muted); font-size: 11px; line-height: 1.55; }
@@ -81,6 +106,10 @@ footer { display: flex; align-items: center; justify-content: center; gap: 8px; 
   h1 { font-size: 31px; }
   .form-panel, .result-panel { padding: 20px; }
   .field-grid { grid-template-columns: 1fr; }
+  .section-intro { display: block; }
+  .section-intro strong { display: block; margin-top: 7px; }
+  .questionnaire-row, .food-item { grid-template-columns: 1fr; gap: 7px; padding: 11px 0; }
+  .food-item-list { padding-left: 18px; }
   .probability { font-size: 54px; }
   .primary-button { width: 100%; }
 }

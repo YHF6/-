@@ -25,10 +25,24 @@ function predict(input) {
   return { raw, calibrated };
 }
 
+function calculateDietFactors(groups) {
+  return model.dietTransform.intercept.map((intercept, factorIndex) => (
+    model.dietTransform.groupNames.reduce((score, groupName, groupIndex) => (
+      score + groups[groupName] * model.dietTransform.coefficients[groupIndex][factorIndex]
+    ), intercept)
+  ));
+}
+
 let maximumError = 0;
 for (const item of model.validationCases) {
   const result = predict(item.input);
   maximumError = Math.max(maximumError, Math.abs(result.raw - item.rawProbability), Math.abs(result.calibrated - item.calibratedProbability));
 }
+for (const item of model.dietValidationCases) {
+  const factors = calculateDietFactors(item.groups);
+  for (let index = 0; index < factors.length; index += 1) {
+    maximumError = Math.max(maximumError, Math.abs(factors[index] - item.factors[index]));
+  }
+}
 if (maximumError > 1e-12) throw new Error(`Prediction mismatch: ${maximumError}`);
-console.log(`Validated ${model.validationCases.length} cases; maximum absolute error ${maximumError}.`);
+console.log(`Validated ${model.validationCases.length} prediction cases and ${model.dietValidationCases.length} EFA cases; maximum absolute error ${maximumError}.`);

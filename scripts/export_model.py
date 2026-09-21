@@ -171,6 +171,18 @@ def main():
     }
 
     factor_train = builder.diet_.transform(x_train[GROUP_COLS])
+
+    # EFA 得分转换由训练集锁定。该转换在无缺失输入下是仿射变换，
+    # 用基向量求出系数后即可在浏览器中复现，不需要暴露 Python 对象。
+    zero_groups = np.zeros((1, len(GROUP_COLS)), dtype=float)
+    diet_intercept = builder.diet_.transform(zero_groups)[0]
+    diet_coefficients = np.vstack([
+        builder.diet_.transform(np.eye(len(GROUP_COLS), dtype=float)[index:index + 1])[0] - diet_intercept
+        for index in range(len(GROUP_COLS))
+    ])
+    reconstructed = diet_intercept + x_train[GROUP_COLS].to_numpy(dtype=float) @ diet_coefficients
+    if np.max(np.abs(reconstructed - factor_train)) > 1e-10:
+        raise AssertionError("浏览器 EFA 仿射转换与锁定 Python 转换器不一致。")
     selected_originals = []
     for item in selected_features[3:]:
         if item["source"] not in selected_originals:
@@ -251,6 +263,23 @@ def main():
             "calibratedProbability": recalibrate(sklearn_probability, intercept, slope),
         })
 
+    group_train = x_train[GROUP_COLS].to_numpy(dtype=float)
+    synthetic_group_cases = [
+        np.median(group_train, axis=0),
+        np.quantile(group_train, 0.25, axis=0),
+        np.quantile(group_train, 0.75, axis=0),
+    ]
+    diet_validation_cases = []
+    for group_values in synthetic_group_cases:
+        expected = builder.diet_.transform(group_values.reshape(1, -1))[0]
+        browser_value = diet_intercept + group_values @ diet_coefficients
+        if np.max(np.abs(expected - browser_value)) > 1e-10:
+            raise AssertionError("EFA 验证案例未通过。")
+        diet_validation_cases.append({
+            "groups": {name: float(value) for name, value in zip(GROUP_COLS, group_values)},
+            "factors": [float(value) for value in expected],
+        })
+
     payload = {
         "modelName": "EFA three-factor scores + RandomForest",
         "modelVersion": "FFQ frequency-direction corrected rerun, 2026-09-20",
@@ -267,9 +296,19 @@ def main():
         "featureNames": list(artifact["feature_names"]),
         "fields": fields,
         "numericTransforms": numeric_transforms,
+        "dietTransform": {
+            "groupNames": GROUP_COLS,
+            "intercept": [float(value) for value in diet_intercept],
+            "coefficients": [[float(value) for value in row] for row in diet_coefficients],
+            "factorRanges": [
+                {"min": float(factor_train[:, index].min()), "max": float(factor_train[:, index].max())}
+                for index in range(3)
+            ],
+        },
         "selectedFeatures": selected_features,
         "trees": trees,
         "validationCases": validation_cases,
+        "dietValidationCases": diet_validation_cases,
     }
     OUTPUT_PATH.write_text(json.dumps(payload, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
     print(f"已生成 {OUTPUT_PATH}")

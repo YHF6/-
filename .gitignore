@@ -40,3 +40,5 @@ next-env.d.ts
 /_chrome_qa_profile/
 *.tar.gz
 /.openai/
+__pycache__/
+*.pyc
