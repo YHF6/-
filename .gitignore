@@ -38,3 +38,4 @@ next-env.d.ts
 /work/
 /_qa/
 /_chrome_qa_profile/
+*.tar.gz
